@@ -1,0 +1,8 @@
+import type { Metadata } from "next";
+import { SettingsPage } from "@/features/settings/components/settings-page";
+
+export const metadata: Metadata = { title: "Settings · Nexa" };
+
+export default function Page() {
+  return <SettingsPage />;
+}

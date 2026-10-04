@@ -6,3 +6,13 @@ logging:
   level:
     com.nexa: DEBUG
     org.flywaydb: INFO
+
+nexa:
+  auth:
+    # Development-only key. Production must set JWT_SECRET (startup fails if it is missing).
+    jwt-secret: ${JWT_SECRET:local-dev-only-secret-change-me-0123456789abcdef}
+    refresh-cookie:
+      secure: ${REFRESH_COOKIE_SECURE:false}
+  mail:
+    # Print password-reset and invitation links to the console, since email delivery is not set up yet.
+    log-links: true

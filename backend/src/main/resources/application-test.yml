@@ -6,6 +6,12 @@ spring:
   flyway:
     clean-disabled: false
 
+nexa:
+  auth:
+    jwt-secret: test-only-secret-0123456789abcdef0123456789
+    refresh-cookie:
+      secure: false
+
 logging:
   structured:
     format:

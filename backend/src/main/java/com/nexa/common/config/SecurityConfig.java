@@ -1,18 +1,20 @@
 package com.nexa.common.config;
 
+import com.nexa.auth.JwtUserAuthenticationConverter;
 import com.nexa.common.web.JsonSecurityErrorHandler;
+import com.nexa.user.Role;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,14 +25,26 @@ import java.time.Duration;
 import java.util.List;
 
 /**
- * Security foundation. The API is stateless (JWT auth arrives in Phase 1), so sessions
- * are disabled and CSRF protection is not needed for bearer-token requests.
+ * The API is stateless: requests authenticate with a short-lived JWT bearer token, so sessions
+ * are disabled and CSRF tokens are not needed. The only cookie-authenticated endpoints
+ * (refresh, logout) rely on a SameSite, httpOnly refresh cookie instead.
  * Everything is denied by default except the explicitly public endpoints below.
  */
 @Configuration
 @EnableMethodSecurity
 @EnableConfigurationProperties(CorsProperties.class)
 public class SecurityConfig {
+
+    private static final String[] PUBLIC_POST_ENDPOINTS = {
+            "/api/v1/auth/register",
+            "/api/v1/auth/login",
+            "/api/v1/auth/refresh",
+            "/api/v1/auth/logout",
+            "/api/v1/auth/password-reset/request",
+            "/api/v1/auth/password-reset/confirm",
+            "/api/v1/auth/invitations/preview",
+            "/api/v1/auth/invitations/accept"
+    };
 
     private static final String[] PUBLIC_GET_ENDPOINTS = {
             "/actuator/health",
@@ -40,7 +54,8 @@ public class SecurityConfig {
     };
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, JsonSecurityErrorHandler errorHandler) throws Exception {
+    SecurityFilterChain securityFilterChain(HttpSecurity http, JsonSecurityErrorHandler errorHandler,
+                                            JwtUserAuthenticationConverter jwtConverter) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {
@@ -56,8 +71,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS).permitAll()
+                        .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
+                .oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter))
+                        .authenticationEntryPoint(errorHandler)
+                        .accessDeniedHandler(errorHandler))
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint(errorHandler)
                         .accessDeniedHandler(errorHandler));
@@ -73,12 +93,14 @@ public class SecurityConfig {
     }
 
     /**
-     * Placeholder with no users, so Spring Boot does not generate a default user with a
-     * logged password. Replaced by the database-backed user service in Phase 1.
+     * ADMIN > MANAGER > MEMBER (PRD section 7.3): a higher role has every permission of the lower ones.
      */
     @Bean
-    UserDetailsService userDetailsService() {
-        return new InMemoryUserDetailsManager();
+    static RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.withDefaultRolePrefix()
+                .role(Role.ADMIN.name()).implies(Role.MANAGER.name())
+                .role(Role.MANAGER.name()).implies(Role.MEMBER.name())
+                .build();
     }
 
     @Bean

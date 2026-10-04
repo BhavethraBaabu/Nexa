@@ -7,14 +7,15 @@ Nexa is a **modular monolith** (PRD section 31): one Spring Boot deployable, spl
 | Package | Responsibility | Phase |
 |---------|----------------|-------|
 | `common` | API models, error handling, security config, correlation IDs | 0 ✅ |
-| `auth`, `user`, `organization` | Authentication, JWT, tenants, RBAC | 1 |
+| `auth`, `user`, `organization` | Authentication, JWT, tenants, RBAC | 1 ✅ |
 | `meeting` | Meetings and transcripts | 2 |
 | `ai` | Extraction, validation, embeddings, agent | 3, 8, 9 |
 | `task`, `decision`, `risk` | Extracted work items | 4 |
-| `action`, `audit` | Approval lifecycle, audit log | 5 |
+| `audit` | Audit log writer (UI in Phase 5) | 1 ✅ |
+| `action` | Approval lifecycle | 5 |
 | `integration.jira/slack/github` | External adapters behind a tool interface | 6, 7 |
 | `search` | Full-text and semantic search | 8 |
-| `notification` | User notifications | later |
+| `notification` | Email (`Mailer`); a logging implementation until delivery is set up | 1 (partial) |
 
 ## Cross-cutting foundations (Phase 0)
 
@@ -36,3 +37,22 @@ lib/         api-client (typed fetch + ApiError mapping), config
 hooks/       shared hooks
 types/       API types mirroring backend DTOs
 ```
+
+## Authentication and tenancy (Phase 1)
+
+```
+Browser ──(Bearer JWT)──▶ BearerTokenAuthenticationFilter ──▶ JwtUserAuthenticationConverter
+                                                              │ reload user, check ACTIVE,
+                                                              │ check org claim matches
+                                                              ▼
+                                                     AuthenticatedUser(userId, organizationId, role)
+                                                              │
+                                     @PreAuthorize("hasRole('ADMIN')")  ·  ADMIN > MANAGER > MEMBER
+                                                              ▼
+                                         Services query with current.organizationId()
+```
+
+- **Tenant isolation**: services never take an organization ID from the client. They use `AuthenticatedUser.organizationId()` and repository methods such as `findByIdAndOrganizationId`. Integration tests cover cross-organization access.
+- **Tokens**: access JWTs are short-lived and only an identifier. Refresh, password-reset and invitation tokens are 256-bit random values, and only their SHA-256 hashes are stored.
+- **Audit**: `AuditService` writes to `audit_logs` inside the caller's transaction. It records registration, logins (successful and failed), logout, token-reuse detection, password resets, invitations, role changes and removals.
+- **Frontend session**: the access token is held in memory only. On load, `AuthProvider` restores the session through `/auth/refresh` and refreshes again before the token expires. Simultaneous refresh calls share one request, because sending the same refresh token twice looks like theft and ends the session.
