@@ -67,6 +67,12 @@ public class Task extends AssignedIdEntity {
     @Column(nullable = false)
     private int position;
 
+    @Column(name = "edited_by")
+    private UUID editedBy;
+
+    @Column(name = "edited_at")
+    private Instant editedAt;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -104,6 +110,49 @@ public class Task extends AssignedIdEntity {
         return task;
     }
 
+    /**
+     * A person's edit (PRD section 15). Setting an owner or deadline by hand makes it authoritative,
+     * replacing whatever the AI extracted.
+     */
+    public void edit(TaskEdit edit, UUID editorId, Instant now) {
+        if (edit.title() != null) {
+            title = edit.title();
+        }
+        if (edit.description() != null) {
+            description = edit.description().isBlank() ? null : edit.description();
+        }
+        if (edit.ownerChanged()) {
+            ownerId = edit.ownerId();
+            ownerName = edit.ownerName();
+            ownerStatus = edit.ownerId() == null ? OwnerStatus.UNASSIGNED : OwnerStatus.RESOLVED;
+        }
+        if (edit.priority() != null) {
+            priority = edit.priority();
+        }
+        if (edit.deadlineChanged()) {
+            deadline = edit.deadline();
+            deadlineStatus = edit.deadline() == null ? DeadlineStatus.NONE : DeadlineStatus.RESOLVED;
+        }
+        if (edit.status() != null) {
+            status = edit.status();
+        }
+        editedBy = editorId;
+        editedAt = now;
+        updatedAt = now;
+    }
+
+    /** Approving an action for a suggested task means a person has accepted the task. */
+    public void acceptIfSuggested(Instant now) {
+        if (status == TaskStatus.SUGGESTED) {
+            status = TaskStatus.OPEN;
+            updatedAt = now;
+        }
+    }
+
+    public boolean isOverdue(LocalDate today) {
+        return deadline != null && deadline.isBefore(today) && status != TaskStatus.DONE && status != TaskStatus.CANCELLED;
+    }
+
     public UUID getOrganizationId() { return organizationId; }
     public UUID getMeetingId() { return meetingId; }
     public String getTitle() { return title; }
@@ -118,4 +167,7 @@ public class Task extends AssignedIdEntity {
     public DeadlineStatus getDeadlineStatus() { return deadlineStatus; }
     public BigDecimal getAiConfidence() { return aiConfidence; }
     public String getEvidence() { return evidence; }
+    public UUID getEditedBy() { return editedBy; }
+    public Instant getEditedAt() { return editedAt; }
+    public Instant getCreatedAt() { return createdAt; }
 }

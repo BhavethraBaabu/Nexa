@@ -50,7 +50,10 @@ public class SecurityConfig {
             "/actuator/health",
             "/actuator/health/**",
             "/actuator/info",
-            "/api/v1/system/info"
+            "/api/v1/system/info",
+            // OAuth redirects from Atlassian/Slack: no bearer token, authenticated by the signed state.
+            "/api/v1/integrations/jira/callback",
+            "/api/v1/integrations/slack/callback"
     };
 
     @Bean

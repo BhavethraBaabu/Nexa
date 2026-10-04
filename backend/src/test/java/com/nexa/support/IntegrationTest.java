@@ -56,7 +56,7 @@ public abstract class IntegrationTest {
     @BeforeEach
     void resetState() {
         jdbcTemplate.execute("""
-                TRUNCATE questions, risks, decisions, tasks, meeting_analyses, meeting_participants, meetings,
+                TRUNCATE external_actions, ai_actions, integrations, questions, risks, decisions, tasks, meeting_analyses, meeting_participants, meetings,
                     audit_logs, invitations, password_reset_tokens, refresh_tokens, users, organizations CASCADE
                 """);
         mailer.clear();

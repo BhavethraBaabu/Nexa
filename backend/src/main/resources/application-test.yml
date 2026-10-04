@@ -15,6 +15,17 @@ nexa:
     # Tests use a scripted fake LLM; no network calls are made.
     api-key: test-key-not-used
     run-inline: true
+  actions:
+    scheduler-enabled: false
+  integrations:
+    encryption-key: dGVzdC1vbmx5LWVuY3J5cHRpb24ta2V5LTMyYnl0ZXM=
+    # Stand-in OAuth apps; base URLs are pointed at local stubs by the tests.
+    jira:
+      client-id: test-jira-client
+      client-secret: test-jira-secret
+    slack:
+      client-id: test-slack-client
+      client-secret: test-slack-secret
 
 logging:
   structured:
