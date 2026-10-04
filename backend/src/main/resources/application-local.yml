@@ -1,0 +1,8 @@
+# Local development: human-readable logs, verbose app logging.
+logging:
+  structured:
+    format:
+      console: ${LOG_FORMAT:}
+  level:
+    com.nexa: DEBUG
+    org.flywaydb: INFO

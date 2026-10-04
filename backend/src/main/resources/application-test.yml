@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: ${TEST_DATABASE_URL:jdbc:postgresql://localhost:5432/nexa_test}
+    username: ${DATABASE_USERNAME:nexa}
+    password: ${DATABASE_PASSWORD:nexa}
+  flyway:
+    clean-disabled: false
+
+logging:
+  structured:
+    format:
+      console: ""
+  level:
+    root: WARN
+    com.nexa: INFO

@@ -1,0 +1,49 @@
+# Local development stack (PRD section 59).
+#   docker compose up -d postgres            # database only; run apps from your IDE
+#   docker compose --profile app up --build  # full stack
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_DB: nexa
+      POSTGRES_USER: ${DATABASE_USERNAME:-nexa}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-nexa}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infrastructure/local/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    profiles: ["app"]
+    build: ./backend
+    environment:
+      SPRING_PROFILES_ACTIVE: local
+      DATABASE_URL: jdbc:postgresql://postgres:5432/nexa
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-nexa}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-nexa}
+      CORS_ALLOWED_ORIGINS: http://localhost:3000
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    profiles: ["app"]
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres-data:

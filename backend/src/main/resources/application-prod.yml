@@ -1,0 +1,24 @@
+# Production: all connection settings must come from the environment (no defaults).
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:20}
+
+management:
+  endpoint:
+    health:
+      show-details: never
+
+nexa:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS}
+
+logging:
+  structured:
+    format:
+      console: logstash
+  level:
+    root: INFO
