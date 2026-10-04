@@ -11,6 +11,10 @@ nexa:
     jwt-secret: test-only-secret-0123456789abcdef0123456789
     refresh-cookie:
       secure: false
+  ai:
+    # Tests use a scripted fake LLM; no network calls are made.
+    api-key: test-key-not-used
+    run-inline: true
 
 logging:
   structured:

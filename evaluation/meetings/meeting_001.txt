@@ -1,0 +1,8 @@
+Sarah: Okay, let's get started on the payment architecture review.
+John: I will implement Redis caching for the payment service by Friday. The repeated balance queries are killing the database.
+Sarah: Great. I'll review it once it's up.
+Mike: On the database question, we've gone back and forth enough.
+Sarah: Agreed. We decided to use PostgreSQL for the new service. Final answer.
+Mike: Then I'll document the deployment process for it.
+John: One concern: the data migration may delay the release if the backfill is slow.
+Sarah: Noted. Let's watch that.

@@ -1,0 +1,10 @@
+Lena: Roadmap review for Q4. Mobile app redesign first.
+Omar: Design is done. I can have the new onboarding flow shipped by the end of the month.
+Lena: Good. Now, pricing. Option A was usage-based, option B was seat-based.
+Omar: I still lean toward A, but Finance prefers B.
+Lena: We have to pick. After the customer interviews, let's go with seat-based pricing, option B.
+Omar: Okay, I'm fine with that.
+Lena: Could someone look into the analytics dashboard? Customers keep asking.
+Omar: Not me, I'm full. Maybe next quarter.
+Lena: Then it stays open. Last thing: the SOC 2 audit starts next Friday. If the access reviews aren't done we could fail it.
+Omar: I'll finish the access reviews by October 20.

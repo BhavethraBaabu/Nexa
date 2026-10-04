@@ -1,0 +1,13 @@
+{
+  "title": "Payments Outage Retro",
+  "meetingDate": "2026-10-08",
+  "participants": ["Tom", "Ana", "Priya"],
+  "members": ["Tom Baker", "Ana Souza", "Priya Raman"],
+  "actionItems": [
+    {"title": "Set up automated certificate renewal (cert-manager) for internal load balancers", "owner": "Priya", "deadline": "2026-10-09"},
+    {"title": "Fix the alert routing", "owner": "Ana", "deadline": "2026-10-09"}
+  ],
+  "decisions": ["Keep the postmortem doc in the shared drive"],
+  "risks": ["The backup certificate expires in two weeks and could cause a repeat outage"],
+  "mustNotDecide": []
+}

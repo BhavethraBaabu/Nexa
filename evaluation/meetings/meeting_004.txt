@@ -1,0 +1,10 @@
+Tom: This is the retro for Tuesday's outage. The payments API was down for 40 minutes.
+Ana: Root cause was the expired TLS certificate on the internal load balancer.
+Tom: We need automated certificate renewal. Priya, can you take that?
+Priya: Sure, I'll set up cert-manager for the internal load balancers by Friday.
+Ana: We also never got paged. The alert went to an old channel.
+Tom: Ana, please fix the alert routing tomorrow.
+Ana: Will do.
+Tom: Open question: who's on call for the payments team after the reorg? Nobody knows.
+Priya: Also, the backup certificate is also expiring in two weeks, so we could have a repeat.
+Tom: Let's keep the postmortem doc in the shared drive. That's settled.

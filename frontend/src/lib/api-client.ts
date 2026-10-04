@@ -34,7 +34,8 @@ function isApiError(value: unknown): value is ApiError {
 export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise<T> {
   const headers = new Headers(init.headers);
   headers.set("Accept", "application/json");
-  if (init.body !== undefined && !headers.has("Content-Type")) {
+  // FormData sets its own multipart Content-Type (with boundary); everything else is JSON.
+  if (init.body !== undefined && !(init.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 
