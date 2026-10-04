@@ -12,7 +12,8 @@ COPY . .
 ARG NEXT_PUBLIC_API_BASE_URL=http://localhost:8080
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+# public/ may be absent in a clean checkout (git does not track empty directories).
+RUN mkdir -p public && npm run build
 
 FROM node:24-alpine AS runtime
 WORKDIR /app
