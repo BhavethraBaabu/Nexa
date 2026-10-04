@@ -18,8 +18,8 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Actions", href: "/actions", available: false },
   { label: "Search", href: "/search", available: false },
   { label: "Integrations", href: "/integrations", available: false },
-  { label: "Team", href: "/team", available: false },
-  { label: "Settings", href: "/settings", available: false },
+  { label: "Team", href: "/team", available: true },
+  { label: "Settings", href: "/settings", available: true },
 ];
 
 export function SidebarNav() {

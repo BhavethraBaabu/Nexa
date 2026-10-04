@@ -4,7 +4,7 @@
 
 Nexa is an AI-powered meeting-to-work platform. It turns meeting transcripts into structured tasks, decisions, owners, deadlines and risks. After a person approves them, it carries out the actions in tools like Jira and Slack.
 
-> **Status:** Phase 0 (Foundation) is complete. See the [roadmap](#roadmap) and [PRD.md](PRD.md).
+> **Status:** Phases 0–1 are complete (foundation, authentication, organizations and RBAC). See the [roadmap](#roadmap) and [PRD.md](PRD.md).
 
 ## Planned features
 
@@ -87,7 +87,9 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000.
+Open http://localhost:3000 and create an organization.
+
+In local development, password-reset and invitation emails aren't sent. The backend prints the links to its console instead (look for `[DEV MAIL]`).
 
 ### Full stack in Docker
 
@@ -122,8 +124,8 @@ nexa-ai/
 | Phase | Scope | Status |
 |------:|-------|--------|
 | 0 | Foundation | ✅ Done |
-| 1 | Authentication & organizations | Next |
-| 2 | Meetings | |
+| 1 | Authentication & organizations | ✅ Done |
+| 2 | Meetings | Next |
 | 3 | AI analysis | |
 | 4 | Tasks & decisions | |
 | 5 | Human approval | |

@@ -1,4 +1,5 @@
 import { BackendStatus } from "@/features/dashboard/components/backend-status";
+import { Greeting } from "@/features/dashboard/components/greeting";
 
 // PRD section 44. Values are populated once meetings and tasks exist (Phases 2–5).
 const WIDGETS = [
@@ -14,7 +15,7 @@ export default function DashboardPage() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
+        <Greeting />
         <p className="mt-1 text-sm text-muted">Your team&apos;s meetings, decisions and work in one place.</p>
       </header>
 

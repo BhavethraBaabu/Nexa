@@ -40,7 +40,8 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
 
   let response: Response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, { ...init, headers });
+    // credentials: "include" lets the browser send/receive the httpOnly refresh cookie.
+    response = await fetch(`${API_BASE_URL}${path}`, { credentials: "include", ...init, headers });
   } catch {
     throw new ApiClientError(0, "NETWORK_ERROR", "Unable to reach the Nexa API");
   }
