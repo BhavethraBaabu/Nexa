@@ -36,4 +36,21 @@ public class AiConfig {
         executor.initialize();
         return executor;
     }
+
+    /** Separate pool so slow Jira/Slack calls never delay analyses (and vice versa). */
+    @Bean
+    TaskExecutor actionTaskExecutor(@Value("${nexa.ai.run-inline:false}") boolean runInline) {
+        if (runInline) {
+            return new SyncTaskExecutor();
+        }
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);
+        executor.setMaxPoolSize(8);
+        executor.setQueueCapacity(500);
+        executor.setThreadNamePrefix("action-");
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(30);
+        executor.initialize();
+        return executor;
+    }
 }

@@ -1,5 +1,6 @@
 package com.nexa.ai.analysis;
 
+import com.nexa.action.ActionGenerator;
 import com.nexa.ai.extraction.MeetingIntelligence;
 import com.nexa.ai.llm.StructuredCompletion;
 import com.nexa.audit.AuditAction;
@@ -42,12 +43,13 @@ class AnalysisResultWriter {
     private final RiskRepository riskRepository;
     private final MeetingQuestionRepository questionRepository;
     private final AuditService auditService;
+    private final ActionGenerator actionGenerator;
     private final Clock clock;
 
     AnalysisResultWriter(MeetingAnalysisRepository analysisRepository, MeetingRepository meetingRepository,
                          TaskRepository taskRepository, DecisionRepository decisionRepository,
                          RiskRepository riskRepository, MeetingQuestionRepository questionRepository,
-                         AuditService auditService, Clock clock) {
+                         AuditService auditService, ActionGenerator actionGenerator, Clock clock) {
         this.analysisRepository = analysisRepository;
         this.meetingRepository = meetingRepository;
         this.taskRepository = taskRepository;
@@ -55,6 +57,7 @@ class AnalysisResultWriter {
         this.riskRepository = riskRepository;
         this.questionRepository = questionRepository;
         this.auditService = auditService;
+        this.actionGenerator = actionGenerator;
         this.clock = clock;
     }
 
@@ -87,11 +90,13 @@ class AnalysisResultWriter {
         questionRepository.deleteByMeetingId(meetingId);
 
         int position = 0;
+        java.util.List<Task> newTasks = new java.util.ArrayList<>();
         for (MeetingIntelligence.ActionItem a : result.actionItems()) {
-            taskRepository.save(Task.fromAnalysis(org, meetingId, analysisId, position++, a.title(), a.description(),
+            newTasks.add(taskRepository.save(Task.fromAnalysis(org, meetingId, analysisId, position++, a.title(), a.description(),
                     a.ownerId(), a.ownerName(), a.ownerStatus(), a.priority(), a.deadline(), a.deadlineText(),
-                    a.deadlineStatus(), a.confidence(), a.evidence(), now));
+                    a.deadlineStatus(), a.confidence(), a.evidence(), now)));
         }
+        actionGenerator.replaceSuggestions(org, meetingId, newTasks, analysis.getRequestedBy(), now);
         position = 0;
         for (MeetingIntelligence.DecisionItem d : result.decisions()) {
             decisionRepository.save(Decision.fromAnalysis(org, meetingId, analysisId, position++, d.decision(), d.context(),

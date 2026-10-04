@@ -1,5 +1,6 @@
 package com.nexa.meeting;
 
+import com.nexa.action.AiActionRepository;
 import com.nexa.ai.AiProperties;
 import com.nexa.ai.analysis.AnalysisResponse;
 import com.nexa.ai.analysis.MeetingAnalysisRepository;
@@ -59,6 +60,7 @@ public class MeetingService {
     private final MemberNameResolver memberNameResolver;
     private final AuditService auditService;
     private final AiProperties aiProperties;
+    private final AiActionRepository actionRepository;
     private final Clock clock;
 
     public MeetingService(MeetingRepository meetingRepository, MeetingParticipantRepository participantRepository,
@@ -66,7 +68,7 @@ public class MeetingService {
                           DecisionRepository decisionRepository, RiskRepository riskRepository,
                           MeetingQuestionRepository questionRepository, UserRepository userRepository,
                           MemberNameResolver memberNameResolver, AuditService auditService, AiProperties aiProperties,
-                          Clock clock) {
+                          AiActionRepository actionRepository, Clock clock) {
         this.meetingRepository = meetingRepository;
         this.participantRepository = participantRepository;
         this.analysisRepository = analysisRepository;
@@ -78,6 +80,7 @@ public class MeetingService {
         this.memberNameResolver = memberNameResolver;
         this.auditService = auditService;
         this.aiProperties = aiProperties;
+        this.actionRepository = actionRepository;
         this.clock = clock;
     }
 
@@ -176,6 +179,7 @@ public class MeetingService {
     }
 
     private void clearAiResults(UUID meetingId) {
+        actionRepository.deletePendingForMeeting(meetingId);
         taskRepository.deleteSuggestedForMeeting(meetingId);
         decisionRepository.deleteByMeetingId(meetingId);
         riskRepository.deleteByMeetingId(meetingId);

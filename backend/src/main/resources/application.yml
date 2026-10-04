@@ -78,6 +78,19 @@ nexa:
     timeout: 120s
     max-transcript-chars: 300000
     stale-after: 15m
+  integrations:
+    encryption-key: ${INTEGRATION_ENCRYPTION_KEY:}
+    callback-base-url: ${API_PUBLIC_URL:http://localhost:8080}
+    frontend-base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+    jira:
+      client-id: ${JIRA_CLIENT_ID:}
+      client-secret: ${JIRA_CLIENT_SECRET:}
+      auth-base-url: ${JIRA_AUTH_BASE_URL:https://auth.atlassian.com}
+      api-base-url: ${JIRA_API_BASE_URL:https://api.atlassian.com}
+    slack:
+      client-id: ${SLACK_CLIENT_ID:}
+      client-secret: ${SLACK_CLIENT_SECRET:}
+      base-url: ${SLACK_BASE_URL:https://slack.com}
 
 logging:
   structured:

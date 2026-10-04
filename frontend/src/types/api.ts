@@ -153,6 +153,95 @@ export interface Dashboard {
   meetingsThisWeek: number;
   totalMeetings: number;
   actionItems: number;
+  completedTasks: number;
+  overdueTasks: number;
+  pendingApprovals: number;
   recentMeetings: { id: string; title: string; meetingDate: string; status: MeetingStatus }[];
   recentDecisions: { id: string; meetingId: string; decision: string }[];
+}
+
+export type TaskStatus = "SUGGESTED" | "OPEN" | "IN_PROGRESS" | "DONE" | "CANCELLED";
+export type TaskFilter = "ALL" | "MINE" | "TEAM" | "OVERDUE" | "COMPLETED" | "PENDING_APPROVAL" | "SUGGESTED";
+export type Provider = "JIRA" | "SLACK" | "GITHUB";
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string | null;
+  owner: { id: string; name: string } | null;
+  ownerName: string | null;
+  ownerStatus: "RESOLVED" | "UNRESOLVED" | "UNASSIGNED";
+  priority: Level;
+  status: TaskStatus;
+  deadline: string | null;
+  deadlineText: string | null;
+  deadlineStatus: "NONE" | "RESOLVED" | "NEEDS_REVIEW";
+  overdue: boolean;
+  confidence: number;
+  confidenceLevel: ConfidenceLevel;
+  evidence: string | null;
+  meeting: { id: string; title: string; meetingDate: string } | null;
+  pendingActions: number;
+  externalLinks: { provider: Provider; id: string; url: string | null }[];
+  canEdit: boolean;
+  editedBy: { id: string; name: string } | null;
+  editedAt: string | null;
+  createdAt: string;
+}
+
+export type ActionType = "CREATE_JIRA_ISSUE" | "SEND_SLACK_MESSAGE" | "DRAFT_EMAIL";
+export type ActionStatus = "PENDING" | "APPROVED" | "REJECTED" | "EXECUTING" | "COMPLETED" | "FAILED" | "CANCELLED";
+
+export interface AiAction {
+  id: string;
+  type: ActionType;
+  status: ActionStatus;
+  provider: Provider | null;
+  meeting: { id: string; title: string; meetingDate: string } | null;
+  task: {
+    id: string;
+    title: string;
+    ownerName: string | null;
+    ownerResolved: boolean;
+    priority: Level;
+    deadline: string | null;
+    deadlineStatus: string;
+    status: TaskStatus;
+  } | null;
+  requestedBy: { id: string; name: string } | null;
+  approvedBy: { id: string; name: string } | null;
+  approvedAt: string | null;
+  executedAt: string | null;
+  attempts: number;
+  nextAttemptAt: string | null;
+  errorCode: string | null;
+  errorMessage: string | null;
+  retryable: boolean;
+  external: { provider: Provider; id: string; url: string | null } | null;
+  result: string | null;
+  canApprove: boolean;
+  blockedReason: string | null;
+  createdAt: string;
+}
+
+export interface IntegrationInfo {
+  provider: Provider;
+  available: boolean;
+  connected: boolean;
+  status: "CONNECTED" | "ERROR" | null;
+  workspaceName: string | null;
+  configured: boolean;
+  config: Record<string, string | null> | null;
+  connectedAt: string | null;
+}
+
+export interface AuditEntry {
+  id: string;
+  timestamp: string;
+  userId: string | null;
+  userName: string | null;
+  action: string;
+  resourceType: string;
+  resourceId: string | null;
+  metadata: Record<string, unknown>;
 }
