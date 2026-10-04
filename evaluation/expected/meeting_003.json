@@ -1,0 +1,13 @@
+{
+  "title": "Q4 Roadmap Review",
+  "meetingDate": "2026-10-14",
+  "participants": ["Lena", "Omar"],
+  "members": ["Lena Fischer", "Omar Haddad"],
+  "actionItems": [
+    {"title": "Ship the new onboarding flow", "owner": "Omar", "deadline": "2026-10-31"},
+    {"title": "Finish the access reviews before the SOC 2 audit", "owner": "Omar", "deadline": "2026-10-20"}
+  ],
+  "decisions": ["Go with seat-based pricing (option B)"],
+  "risks": ["Incomplete access reviews could cause the SOC 2 audit to fail"],
+  "mustNotDecide": ["usage-based", "analytics dashboard"]
+}

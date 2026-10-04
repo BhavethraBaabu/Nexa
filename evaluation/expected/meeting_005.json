@@ -1,0 +1,10 @@
+{
+  "title": "Daily Check-in",
+  "meetingDate": "2026-10-12",
+  "participants": ["Kim", "Raj"],
+  "members": ["Kim Nguyen", "Raj Mehta"],
+  "actionItems": [],
+  "decisions": [],
+  "risks": [],
+  "mustNotDecide": []
+}

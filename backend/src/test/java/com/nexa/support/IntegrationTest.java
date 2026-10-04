@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-@Import(IntegrationTest.TestMailConfig.class)
+@Import(IntegrationTest.TestDoublesConfig.class)
 public abstract class IntegrationTest {
 
     protected static final String PASSWORD = "correct-horse-battery";
@@ -50,12 +50,17 @@ public abstract class IntegrationTest {
     @Autowired
     protected RecordingMailer mailer;
 
+    @Autowired
+    protected FakeLlmClient llm;
+
     @BeforeEach
     void resetState() {
         jdbcTemplate.execute("""
-                TRUNCATE audit_logs, invitations, password_reset_tokens, refresh_tokens, users, organizations CASCADE
+                TRUNCATE questions, risks, decisions, tasks, meeting_analyses, meeting_participants, meetings,
+                    audit_logs, invitations, password_reset_tokens, refresh_tokens, users, organizations CASCADE
                 """);
         mailer.clear();
+        llm.reset();
     }
 
     protected Session register(String name, String email, String organizationName) throws Exception {
@@ -116,12 +121,18 @@ public abstract class IntegrationTest {
     }
 
     @TestConfiguration(proxyBeanMethods = false)
-    static class TestMailConfig {
+    static class TestDoublesConfig {
 
         @Bean
         @Primary
         RecordingMailer recordingMailer() {
             return new RecordingMailer();
+        }
+
+        @Bean
+        @Primary
+        FakeLlmClient fakeLlmClient() {
+            return new FakeLlmClient();
         }
     }
 

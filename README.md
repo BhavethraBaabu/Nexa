@@ -4,7 +4,7 @@
 
 Nexa is an AI-powered meeting-to-work platform. It turns meeting transcripts into structured tasks, decisions, owners, deadlines and risks. After a person approves them, it carries out the actions in tools like Jira and Slack.
 
-> **Status:** Phases 0–1 are complete (foundation, authentication, organizations and RBAC). See the [roadmap](#roadmap) and [PRD.md](PRD.md).
+> **Status:** Phases 0–3 are complete: foundation, authentication and RBAC, meetings, and AI analysis. See the [roadmap](#roadmap) and [PRD.md](PRD.md).
 
 ## Planned features
 
@@ -41,7 +41,7 @@ See [docs/architecture.md](docs/architecture.md).
 
 ## Tech stack
 
-Java 21 · Spring Boot 4 · PostgreSQL 17 · pgvector · Flyway · Next.js 16 · TypeScript · Tailwind CSS · Docker · GitHub Actions
+Java 21 · Spring Boot 4 · PostgreSQL 17 · pgvector · Flyway · Claude (Anthropic Java SDK) · Next.js 16 · TypeScript · Tailwind CSS · Docker · GitHub Actions
 Planned: Redis · Kafka · Terraform · AWS
 
 ## Local setup
@@ -89,6 +89,12 @@ npm run dev
 
 Open http://localhost:3000 and create an organization.
 
+To turn on AI analysis, set an Anthropic API key before starting the backend. Without one, meetings still work but analysis reports that AI isn't configured:
+
+```bash
+export LLM_API_KEY=sk-ant-...
+```
+
 In local development, password-reset and invitation emails aren't sent. The backend prints the links to its console instead (look for `[DEV MAIL]`).
 
 ### Full stack in Docker
@@ -102,6 +108,7 @@ docker compose --profile app up --build
 ```bash
 cd backend && ./mvnw verify            # unit + integration tests (needs Postgres), JaCoCo report in target/site/jacoco
 cd frontend && npm test && npm run lint && npm run typecheck
+LLM_API_KEY=sk-ant-... ./mvnw test -Pevaluation   # (backend) AI quality report on /evaluation, calls the paid API
 ```
 
 ## Project structure
@@ -111,7 +118,7 @@ nexa-ai/
 ├── backend/          Spring Boot API (modular monolith, com.nexa.*)
 ├── frontend/         Next.js + TypeScript app
 ├── infrastructure/   Local DB init, Terraform (Phase 10)
-├── evaluation/       AI evaluation dataset (Phase 3)
+├── evaluation/       AI evaluation transcripts, expected results, runner instructions
 ├── docs/             Architecture, API and AI docs
 ├── .github/          CI workflows
 ├── docker-compose.yml
@@ -125,9 +132,9 @@ nexa-ai/
 |------:|-------|--------|
 | 0 | Foundation | ✅ Done |
 | 1 | Authentication & organizations | ✅ Done |
-| 2 | Meetings | Next |
-| 3 | AI analysis | |
-| 4 | Tasks & decisions | |
+| 2 | Meetings | ✅ Done |
+| 3 | AI analysis | ✅ Done |
+| 4 | Tasks & decisions | Next |
 | 5 | Human approval | |
 | 6 | Jira | |
 | 7 | Slack | |

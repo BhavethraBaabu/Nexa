@@ -1,0 +1,7 @@
+Priya: Sprint planning. First, the flaky checkout tests.
+Dev: They failed three times yesterday. We should probably get someone from backend to fix this.
+Priya: Yeah. Let's get this done soon, it's blocking merges.
+Dev: Separately, maybe we should use Redis for the session store? It might be faster than the database.
+Priya: Maybe. I'd want numbers first. Let's not commit to that yet.
+Dev: Fair. I'll run a load test comparing both by Wednesday.
+Priya: Perfect. And I'll update the sprint board today.

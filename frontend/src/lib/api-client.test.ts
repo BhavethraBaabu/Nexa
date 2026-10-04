@@ -70,3 +70,15 @@ describe("apiFetch", () => {
     expect(headers.get("Content-Type")).toBe("application/json");
   });
 });
+
+describe("apiFetch with FormData", () => {
+  it("lets the browser set the multipart content type", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response("{}", { status: 200 }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await apiFetch("/upload", { method: "POST", body: new FormData() });
+
+    const headers = fetchMock.mock.calls[0][1].headers as Headers;
+    expect(headers.has("Content-Type")).toBe(false);
+  });
+});

@@ -27,3 +27,4 @@ frontend/next-env.d.ts
 .vscode/
 *.iml
 .DS_Store
+evaluation/results/

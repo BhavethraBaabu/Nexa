@@ -13,7 +13,7 @@ interface NavItem {
 // PRD section 43.
 const NAV_ITEMS: NavItem[] = [
   { label: "Dashboard", href: "/", available: true },
-  { label: "Meetings", href: "/meetings", available: false },
+  { label: "Meetings", href: "/meetings", available: true },
   { label: "Tasks", href: "/tasks", available: false },
   { label: "Actions", href: "/actions", available: false },
   { label: "Search", href: "/search", available: false },
@@ -40,7 +40,7 @@ export function SidebarNav() {
             </span>
           );
         }
-        const active = pathname === item.href;
+        const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}

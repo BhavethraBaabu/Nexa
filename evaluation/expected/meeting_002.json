@@ -1,0 +1,14 @@
+{
+  "title": "Sprint Planning",
+  "meetingDate": "2026-10-05",
+  "participants": ["Priya", "Dev"],
+  "members": ["Priya Raman", "Dev Patel"],
+  "actionItems": [
+    {"title": "Fix the flaky checkout tests", "owner": null, "deadline": null},
+    {"title": "Run a load test comparing Redis and the database for sessions", "owner": "Dev", "deadline": "2026-10-07"},
+    {"title": "Update the sprint board", "owner": "Priya", "deadline": "2026-10-05"}
+  ],
+  "decisions": [],
+  "risks": ["Flaky checkout tests are blocking merges"],
+  "mustNotDecide": ["Redis"]
+}

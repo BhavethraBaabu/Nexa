@@ -1,0 +1,14 @@
+{
+  "title": "Payment Architecture Review",
+  "meetingDate": "2026-10-03",
+  "participants": ["Sarah", "John", "Mike"],
+  "members": ["Sarah Lee", "John Smith", "Mike Chen"],
+  "actionItems": [
+    {"title": "Implement Redis caching for the payment service", "owner": "John", "deadline": "2026-10-09"},
+    {"title": "Review the Redis caching implementation", "owner": "Sarah", "deadline": null},
+    {"title": "Document the deployment process", "owner": "Mike", "deadline": null}
+  ],
+  "decisions": ["Use PostgreSQL for the new service"],
+  "risks": ["Data migration may delay the release"],
+  "mustNotDecide": []
+}

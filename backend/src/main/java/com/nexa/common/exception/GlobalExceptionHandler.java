@@ -18,6 +18,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.List;
@@ -60,6 +63,16 @@ public class GlobalExceptionHandler {
             MissingServletRequestParameterException.class})
     ResponseEntity<ApiError> handleMalformed(Exception ex, HttpServletRequest request) {
         return respond(ErrorCode.MALFORMED_REQUEST, "Request is malformed or has invalid parameters", request);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    ResponseEntity<ApiError> handleUploadTooLarge(MaxUploadSizeExceededException ex, HttpServletRequest request) {
+        return respond(ErrorCode.VALIDATION_ERROR, "The file is too large. The limit is 10 MB.", request);
+    }
+
+    @ExceptionHandler({MissingServletRequestPartException.class, MultipartException.class})
+    ResponseEntity<ApiError> handleMultipart(Exception ex, HttpServletRequest request) {
+        return respond(ErrorCode.MALFORMED_REQUEST, "Attach a file in the \"file\" field", request);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
